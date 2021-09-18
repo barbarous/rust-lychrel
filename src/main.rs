@@ -6,7 +6,7 @@ use std::{thread, time};
 
 static mut COUNTER: u32 = 0;
 static MAX_DISPLAY_ITR: u32 = 25;
-static LAPTOP_SLEEP_SAVER: u64 = 1_000;
+static LAPTOP_SLEEP_SAVER: u64 = 500;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -15,26 +15,31 @@ fn main() {
     } else {
         match BigUint::parse_bytes(args[1].as_bytes(), 10) {
             None => println!("{} isn't a number", args[1]),
-            Some(lychrel) => {
-                println!("Result: {}", revert_str(lychrel));
+            Some(num) => {
+                println!("Result: {}", reverse_and_add(&num, &revert(&num)));
             }
         }
     }
 }
 
-fn revert_str(dec: BigUint) -> BigUint {
-    let dec_rev = dec
+fn revert(dec: &BigUint) -> BigUint{
+    return dec
         .to_string()
         .chars()
         .rev()
         .collect::<String>()
         .parse::<BigUint>()
         .unwrap();
-    if dec == dec_rev {
-        return dec;
+}
+
+fn reverse_and_add(num: &BigUint, rvt_num: &BigUint) -> BigUint {
+    let next = num + rvt_num;
+    display(&next);
+    let rvt_next = revert(&next);
+    if next == rvt_next {
+        return next;
     }
-    display(&dec);
-    return revert_str(dec + dec_rev);
+    return reverse_and_add(&next, &rvt_next);
 }
 
 fn display(num: &BigUint) {
