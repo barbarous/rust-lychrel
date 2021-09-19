@@ -18,9 +18,10 @@ fn main() {
             Some(num) => {
                 if args.len() == 3 && args[2] == "recursion" {
                     println!("Recursion!");
-                    println!("Result: {}", reverse_and_add(&num, &revert(&num)));
+                    let rvt_num = revert(&num);
+                    println!("Result: {}", reverse_and_add_recursively(num, rvt_num));
                 } else {
-                    reverse_and_add_iteratively(num);
+                    println!("Result: {}", reverse_and_add_iteratively(num));
                 }
             }
         }
@@ -37,17 +38,17 @@ fn revert(dec: &BigUint) -> BigUint {
         .unwrap();
 }
 
-fn reverse_and_add(num: &BigUint, rvt_num: &BigUint) -> BigUint {
+fn reverse_and_add_recursively(num: BigUint, rvt_num: BigUint) -> BigUint {
     let next = num + rvt_num;
     count(&next);
     let rvt_next = revert(&next);
     if next == rvt_next {
         return next;
     }
-    return reverse_and_add(&next, &rvt_next);
+    return reverse_and_add_recursively(next, rvt_next);
 }
 
-fn reverse_and_add_iteratively(num: BigUint) {
+fn reverse_and_add_iteratively(num: BigUint) -> BigUint{
     let mut next: BigUint = num;
     let mut rvt_next: BigUint = revert(&next);
     loop {
@@ -55,8 +56,7 @@ fn reverse_and_add_iteratively(num: BigUint) {
         count(&next);
         rvt_next = revert(&next);
         if next == rvt_next {
-            println!("Result: {}", next);
-            break;
+            return next;
         }
     }
 }
